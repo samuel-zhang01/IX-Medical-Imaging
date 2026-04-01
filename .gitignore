@@ -1,2 +1,16 @@
 *.npz
 *.zip
+
+# Model checkpoints (too large for git)
+checkpoints/
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.synctex.gz
+texput.log
+
+# Python
+__pycache__/
+*.pyc

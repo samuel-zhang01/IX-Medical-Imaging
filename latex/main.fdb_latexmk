@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1775178957.33719 "/root/IX-Medical-Imaging/latex/main.tex" "main.pdf" "main" 1775178960.49636 0
+["pdflatex"] 1775180522.37741 "/root/IX-Medical-Imaging/latex/main.tex" "main.pdf" "main" 1775180525.65304 0
   "/etc/texmf/web2c/texmf.cnf" 1773244281.24274 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/root/.texlive2025/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0900.600pk" 1775002400.16112 22480 61383abc5aa969d47c2c0d7b5ac68e5c ""
   "/root/.texlive2025/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600pk" 1775002399.71997 25396 3a37fdd2f0ea6f75ce5c71db98c42ea5 ""
@@ -12,7 +12,7 @@
   "/root/.texlive2025/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600pk" 1775002399.54419 31872 696b09fdbdddeb13fe1602504f24542c ""
   "/root/.texlive2025/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0900.600pk" 1775002400.31301 17492 771e14f2b72fd939e76539d0e30a60e8 ""
   "/root/.texlive2025/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0900.600pk" 1775002400.00853 10448 50c797f62cc193955925b661a72557d3 ""
-  "/root/IX-Medical-Imaging/latex/main.tex" 1775178957.18288 27638 cfa95ee9a835a8807a31ece1c5e720ee ""
+  "/root/IX-Medical-Imaging/latex/main.tex" 1775180511.75385 27331 788959ad0af395a0171054e4a3d9ac5a ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0900.tfm" 1136768653 3584 1a7de6c99457381c64abc1a7c545505f ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx1000.tfm" 1136768653 3584 2d666ecf6d466d8b007246bc2f94d9da ""
@@ -121,7 +121,7 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1741904018 41538 c016915c1d51223b6dbbfe27341748a8 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1773244293 128227 ed67923a37f7748d267799454bc1f95b ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1773321937 1928192 14249552525ee2d4081e4afed9ca6f52 ""
-  "figures/fig13_ensemble_vs_mcdropout.png" 1775178633.83506 1589547 14390a5d314b69801f9dbffa4d66d445 ""
+  "figures/fig13_ensemble_vs_mcdropout.png" 1775180152.48963 2096973 bea96e6e29f1e769d1cf9b753c68620b ""
   "figures/fig15_uncertainty_seg_correlation.png" 1775178636.23608 1106216 4a31723ab48cde06880b8d940673bf89 ""
   "figures/fig4_reconstruction_comparison.png" 1775178594.6866 1017964 876a3852f1fa6b5f3b1e4d6133fd12ae ""
   "figures/figA1_dataset_overview.png" 1775178110.00422 914532 469c57ce01de5f16d884ed3ae14e0371 ""
@@ -132,9 +132,9 @@
   "figures/figA6_cross_domain.png" 1775178114.36805 111546 d3ac72bd4a827bac5d33cbd455f3d962 ""
   "figures/figA7_downstream_segmentation.png" 1775178114.51906 140591 e238c4510f1f951ce28bf0f585ce0bc2 ""
   "llncs.cls" 1774998510.73839 43402 5fb5a2dc40571aa40f3d199c00cbb986 ""
-  "main.aux" 1775178960.45383 16605 cf8b8a26e1479b45b911416495ad5134 "pdflatex"
-  "main.out" 1775178960.45383 469 6d00208cdabc0a697364d89c93b1a6e1 "pdflatex"
-  "main.tex" 1775178957.18288 27638 cfa95ee9a835a8807a31ece1c5e720ee ""
+  "main.aux" 1775180525.61701 15579 a8ab38e95251ac69449a5f683db7537e "pdflatex"
+  "main.out" 1775180525.61801 469 6d00208cdabc0a697364d89c93b1a6e1 "pdflatex"
+  "main.tex" 1775180511.75385 27331 788959ad0af395a0171054e4a3d9ac5a ""
   (generated)
   "main.aux"
   "main.log"

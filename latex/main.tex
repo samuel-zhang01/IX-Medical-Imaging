@@ -83,14 +83,16 @@ The MM-WHS cardiac dataset~\cite{zhuang2019mmwhs} provides $256{\times}256$ magn
 \begin{table}[t]
 \caption{Reconstruction quality on the MM-WHS MR test set (236 slices). Disabling DC at inference collapses PSNR by 8.1\,dB, confirming that physics-informed k-space enforcement is essential.}\label{tab:recon}
 \centering\footnotesize
-\begin{tabular}{l|ccc|ccc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l ccc ccc}
 \toprule
-& \multicolumn{3}{c|}{$R{=}4\times$} & \multicolumn{3}{c}{$R{=}8\times$} \\
-Method & PSNR & SSIM & NMSE & PSNR & SSIM & NMSE \\
+& \multicolumn{3}{c}{$R{=}4\times$} & \multicolumn{3}{c}{$R{=}8\times$} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+Method & PSNR\,$\uparrow$ & SSIM\,$\uparrow$ & NMSE\,$\downarrow$ & PSNR\,$\uparrow$ & SSIM\,$\uparrow$ & NMSE\,$\downarrow$ \\
 \midrule
-Zero-filled & 29.00 & 0.786 & --- & 28.01 & 0.801 & --- \\
-U-Net only (no DC) & 23.84 & 0.619 & --- & --- & --- & --- \\
-U-Net + DC (proposed) & \textbf{31.90} & \textbf{0.889} & \textbf{0.016} & \textbf{29.59} & \textbf{0.837} & \textbf{0.028} \\
+Zero-filled        & 29.00 & 0.786 & --    & 28.01 & 0.801 & --    \\
+U-Net (no DC)      & 23.84 & 0.619 & --    & --    & --    & --    \\
+U-Net + DC (ours)  & \textbf{31.90} & \textbf{0.889} & \textbf{0.016} & \textbf{29.59} & \textbf{0.837} & \textbf{0.028} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -111,12 +113,15 @@ Gradient-based attributions reveal how the network achieves these gains. Salienc
 \begin{table}[t]
 \caption{Uncertainty method comparison. The ensemble yields better calibration (lower ECE), while MC Dropout provides stronger pixel-level error correlation and tighter sparsification (lower AUSE). Both positively correlate with downstream segmentation failure.}\label{tab:uq}
 \centering\footnotesize
-\begin{tabular}{l|cc|ccc|c}
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{l cc ccc c}
 \toprule
-Method & PSNR & SSIM & ECE$\downarrow$ & AUSE$\downarrow$ & Pearson $r$$\uparrow$ & Seg.\ corr. \\
+& \multicolumn{2}{c}{Reconstruction} & \multicolumn{3}{c}{Calibration} & Clinical \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-6} \cmidrule(lr){7-7}
+Method & PSNR\,$\uparrow$ & SSIM\,$\uparrow$ & ECE\,$\downarrow$ & AUSE\,$\downarrow$ & $r$\,$\uparrow$ & Seg.\,$r$ \\
 \midrule
-MC Dropout ($T{=}30$) & 31.95 & 0.889 & 0.026 & \textbf{9.3e-5} & \textbf{0.590} & 0.193 \\
-Deep Ensemble ($M{=}3$) & \textbf{32.09} & \textbf{0.891} & \textbf{0.017} & 1.3e-4 & 0.493 & 0.156 \\
+MC Dropout ($T{=}30$)    & 31.95 & 0.889 & 0.026 & \textbf{9.3e-5} & \textbf{0.590} & 0.193 \\
+Deep Ensemble ($M{=}3$)  & \textbf{32.09} & \textbf{0.891} & \textbf{0.017} & 1.3e-4 & 0.493 & 0.156 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -135,15 +140,17 @@ Fig.~\ref{fig:uncertainty} visualises these differences. The sparsification plot
 \begin{table}[t]
 \caption{Robustness evaluation. PSNR (dB) under FGSM/PGD adversarial attacks and cross-domain shift. Uncertainty rises monotonically with attack strength and increases 77\% on out-of-distribution CT data.}\label{tab:robust}
 \centering\footnotesize
-\begin{tabular}{l|cccc|cc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{l cccc cc}
 \toprule
-& \multicolumn{4}{c|}{Adversarial PSNR at $\epsilon$} & \multicolumn{2}{c}{Cross-domain} \\
+& \multicolumn{4}{c}{Adversarial PSNR (dB) at $\epsilon$} & \multicolumn{2}{c}{Cross-domain} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-7}
  & 0.005 & 0.01 & 0.02 & 0.05 & MR & CT \\
 \midrule
-Clean & 31.4 & 31.4 & 31.4 & 31.4 & 31.3 & 30.4 \\
-FGSM & 28.9 & 27.5 & 25.6 & 22.5 & --- & --- \\
-PGD-7 & 27.6 & 25.8 & 23.3 & 19.8 & --- & --- \\
-\midrule
+Clean       & 31.4 & 31.4 & 31.4 & 31.4 & 31.3 & 30.4 \\
+FGSM        & 28.9 & 27.5 & 25.6 & 22.5 & --   & --   \\
+PGD-7       & 27.6 & 25.8 & 23.3 & 19.8 & --   & --   \\
+\addlinespace
 Uncertainty & .005 & .006 & .007 & .009 & .004 & \textbf{.007} \\
 \bottomrule
 \end{tabular}
@@ -156,13 +163,16 @@ Table~\ref{tab:robust} shows that PGD degrades PSNR more severely than FGSM at e
 \begin{table}[t]
 \caption{Mean Dice score of a segmentation network on ground-truth, reconstructed, and zero-filled images. At $R{=}4{\times}$, the proposed method preserves 92\% of ground-truth Dice, while zero-filling retains only 49\%.}\label{tab:dice}
 \centering\footnotesize
-\begin{tabular}{l|ccccc}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{l ccccc}
 \toprule
-Input source & $R{=}2$ & $R{=}4$ & $R{=}6$ & $R{=}8$ & $R{=}10$ \\
+& \multicolumn{5}{c}{Dice score\,$\uparrow$ at acceleration factor $R$} \\
+\cmidrule(lr){2-6}
+Input source & $2\times$ & $4\times$ & $6\times$ & $8\times$ & $10\times$ \\
 \midrule
-Ground truth & .672 & .672 & .672 & .672 & .672 \\
-U-Net + DC (proposed) & \textbf{.668} & \textbf{.617} & \textbf{.540} & \textbf{.477} & \textbf{.377} \\
-Zero-filled & .538 & .332 & .262 & .231 & .216 \\
+Ground truth       & 0.672 & 0.672 & 0.672 & 0.672 & 0.672 \\
+U-Net + DC (ours)  & \textbf{0.668} & \textbf{0.617} & \textbf{0.540} & \textbf{0.477} & \textbf{0.377} \\
+Zero-filled        & 0.538 & 0.332 & 0.262 & 0.231 & 0.216 \\
 \bottomrule
 \end{tabular}
 \end{table}

@@ -190,22 +190,21 @@ Table~\ref{tab:dice} evaluates clinical utility (see also Appendix Fig.~\ref{fig
 \section{Discussion}\label{sec:discussion}
 %=============================================
 
-All three attribution methods correlate positively with reconstruction error, confirming that the U-Net encodes clinically meaningful features. Saliency concentrates on cardiac boundaries while Grad-CAM reveals hierarchical reasoning from local edges to global anatomy. MC Dropout and ensembles offer complementary uncertainty: MC Dropout achieves stronger pixel-level correlation ($r{=}0.59$) and tighter sparsification for per-pixel masking, while ensembles yield lower ECE (0.017 vs.\ 0.026) for calibrated confidence intervals. A clinical deployment could combine ensemble disagreement for slice-level quality gating with MC Dropout for pixel-level uncertainty overlay.
+All three attribution methods correlate positively with reconstruction error, confirming that the U-Net encodes clinically meaningful features. Saliency concentrates on cardiac boundaries; Grad-CAM reveals hierarchical reasoning from local edges to global anatomy. MC Dropout and ensembles offer complementary uncertainty: MC Dropout achieves stronger pixel-level correlation ($r{=}0.59$) and tighter sparsification, while ensembles yield lower ECE (0.017 vs.\ 0.026). A clinical deployment could combine ensemble disagreement for slice-level gating with MC Dropout for pixel-level overlay.
 
-The DC layer enforces fidelity to measured k-space regardless of network predictions, so image-domain adversarial perturbations cannot alter acquired measurements. Disabling DC collapses PSNR by 8.1\,dB, making it the single largest factor in reconstruction quality, paralleling the TGVN~\cite{atalik2026tgvn} principle of separating trusted from untrusted information.
+The DC layer enforces fidelity to measured k-space regardless of network predictions, so image-domain adversarial perturbations cannot alter acquired measurements. Disabling DC collapses PSNR by 8.1\,dB, paralleling the TGVN~\cite{atalik2026tgvn} principle of separating trusted from untrusted information. The 77\% uncertainty increase on OOD CT data demonstrates practical distribution-shift detection, while Dice preservation at $R{=}2{-}4{\times}$ and positive uncertainty--segmentation correlation ($r{=}0.19$) confirm that the framework extends from pixel-level to task-level trustworthiness.
 
-The 77\% uncertainty increase on out-of-distribution CT data demonstrates practical OOD detection. Downstream segmentation evaluation moves beyond pixel metrics: Dice preservation at $R{=}2{-}4{\times}$ confirms artefacts do not catastrophically propagate, while the positive uncertainty--segmentation-failure correlation ($r{=}0.19$) suggests uncertainty maps can predict diagnostic degradation spatially.
-
-Simulated single-coil Cartesian undersampling does not capture multi-coil clinical complexity. The three-member ensemble is small; larger ensembles may improve calibration. The moderate uncertainty--segmentation correlation ($r{=}0.19$) leaves room for improvement via heteroscedastic loss~\cite{edupuganti2021uncertainty} or uncertainty-guided adaptive DC. Future work should extend to multi-coil data and prospectively undersampled acquisitions.
+Limitations include simulated single-coil Cartesian undersampling, a small three-member ensemble, and moderate uncertainty--segmentation correlation. Future work should extend to multi-coil data, heteroscedastic loss~\cite{edupuganti2021uncertainty}, and prospectively undersampled acquisitions.
 
 %=============================================
 \paragraph{Data and code availability.} The source code and trained models are publicly available at \url{https://github.com/samuel-zhang01/IX-Medical-Imaging}.
 
 %=============================================
-\vspace{-2mm}
+\vspace{-3mm}
 \begin{thebibliography}{21}
 \footnotesize
-\setlength{\itemsep}{-1pt}
+\setlength{\itemsep}{-2pt}
+\setlength{\parsep}{0pt}
 
 \bibitem{safari2025} Safari, M., et al.: Advancing MRI reconstruction: a systematic review of DL and CS integration. \textit{Biomed.\ Signal Process.\ Control} (2025)
 \bibitem{atalik2026tgvn} Atalik, A., Chopra, S., Sodickson, D.K.: A trust-guided approach to MR image reconstruction with side information. \textit{IEEE TMI} \textbf{45}(1), 190--205 (2026)

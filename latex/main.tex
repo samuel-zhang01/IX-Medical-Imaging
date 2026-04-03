@@ -5,12 +5,13 @@
 \usepackage{booktabs}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{url}
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \urlstyle{rm}
 
 \begin{document}
 
-\title{Uncertainty-Aware Deep MRI Reconstruction:\\ A Multi-Faceted Trustworthiness Analysis}
+\title{Uncertainty-Aware Deep MRI Reconstruction:\\ A Multi-Modal Trustworthiness Analysis}
 
 \author{Samuel Zhang\inst{1}}
 \authorrunning{S.\ Zhang}
@@ -20,7 +21,7 @@
 \maketitle
 
 \begin{abstract}
-Deep learning accelerates MRI acquisition by reconstructing diagnostic-quality images from undersampled k-space, yet clinical adoption demands trustworthiness beyond aggregate pixel-level metrics. This work presents a systematic evaluation framework probing four trust dimensions of a U-Net reconstruction network with learnable data-consistency (DC) layers, trained on cardiac MR images. \textbf{Explainability} is assessed through saliency maps, Grad-CAM, and integrated gradients. \textbf{Predictive uncertainty} is quantified via both Monte-Carlo (MC) Dropout and deep ensembles, with calibration and sparsification comparisons. \textbf{Robustness} is examined under k-space noise, FGSM/PGD adversarial attacks, and MR$\to$CT distribution shift. \textbf{Downstream clinical impact} is measured through cardiac segmentation Dice scores. A DC-layer ablation reveals an 8.1\,dB PSNR collapse at inference, confirming physics-informed consistency as a prerequisite for trustworthy reconstruction. Experiments on the MM-WHS dataset demonstrate that uncertainty maps reliably flag degraded reconstructions across all perturbation modes.
+Deep learning accelerates MRI acquisition by reconstructing diagnostic-quality images from undersampled k-space, yet clinical adoption demands trustworthiness beyond aggregate pixel-level metrics. This work presents a systematic evaluation framework probing four trust dimensions of a U-Net reconstruction network with learnable data-consistency (DC) layers, trained on cardiac MR images. Explainability is assessed through saliency maps, Grad-CAM, and integrated gradients. Predictive uncertainty is quantified via both Monte-Carlo (MC) Dropout and deep ensembles, with calibration and sparsification comparisons. Robustness is examined under k-space noise, FGSM/PGD adversarial attacks, and MR$\to$CT distribution shift. Downstream clinical impact is measured through cardiac segmentation Dice scores. A DC-layer ablation reveals an 8.1\,dB PSNR collapse at inference, confirming physics-informed consistency as a prerequisite for trustworthy reconstruction. Experiments on the MM-WHS dataset demonstrate that uncertainty maps reliably flag degraded reconstructions across all perturbation modes.
 
 \keywords{MRI reconstruction \and Trustworthy AI \and Uncertainty quantification \and Explainability \and Adversarial robustness.}
 \end{abstract}
@@ -31,7 +32,7 @@ Deep learning accelerates MRI acquisition by reconstructing diagnostic-quality i
 
 Magnetic resonance imaging provides unparalleled soft-tissue contrast for cardiac diagnosis, yet its inherently slow acquisition limits patient throughput and raises healthcare costs~\cite{safari2025}. Acquiring fewer k-space measurements and reconstructing the missing information with deep neural networks has become an established acceleration strategy; architectures spanning U-Net~\cite{ronneberger2015}, variational networks~\cite{hammernik2018}, and cascaded data-consistency (DC) models~\cite{schlemper2018} routinely achieve high-fidelity images at four- to eightfold undersampling~\cite{safari2025}.
 
-High average reconstruction quality alone, however, does not suffice for clinical deployment. A \emph{trustworthy} reconstruction system must reveal \emph{when} it may err (uncertainty quantification), \emph{why} it produces a particular output (explainability), whether it degrades gracefully under perturbation (robustness), and whether downstream diagnostic tasks remain reliable (clinical utility)~\cite{atalik2026tgvn,kaur2022trustworthy}. Although individual facets---MC Dropout uncertainty~\cite{gal2016}, deep ensembles~\cite{lakshminarayanan2017}, gradient-based attribution---have been studied in isolation, comprehensive evaluations that probe \emph{multiple} trust dimensions simultaneously for MRI reconstruction remain scarce.
+High average reconstruction quality alone, however, does not suffice for clinical deployment. A trustworthy reconstruction system must reveal \emph{when} it may err (uncertainty quantification), \emph{why} it produces a particular output (explainability), whether it degrades gracefully under perturbation (robustness), and whether downstream diagnostic tasks remain reliable (clinical utility)~\cite{atalik2026tgvn,kaur2022trustworthy}. Although individual facets---MC Dropout uncertainty~\cite{gal2016}, deep ensembles~\cite{lakshminarayanan2017}, gradient-based attribution---have been studied in isolation, comprehensive evaluations that probe multiple trust dimensions simultaneously for MRI reconstruction remain scarce.
 
 This work presents a unified trustworthiness evaluation with five contributions: (1)~a U-Net with cascaded soft DC layers, hyper-parameter-optimised via Bayesian search to 31.9\,dB PSNR at $R{=}4{\times}$; (2)~explainability analysis via saliency maps, Grad-CAM~\cite{selvaraju2017}, and integrated gradients~\cite{sundararajan2017}, adapted from classification to reconstruction loss; (3)~a comparative uncertainty study of MC Dropout ($T{=}30$) and deep ensembles ($M{=}3$)~\cite{lakshminarayanan2017} with calibration diagnostics; (4)~robustness evaluation under noise, adversarial attacks~\cite{goodfellow2015explaining,madry2018towards}, MR$\to$CT domain shift, and a DC-layer ablation; (5)~downstream cardiac segmentation evaluation using MM-WHS labels~\cite{zhuang2019mmwhs} with uncertainty--segmentation-failure correlation analysis.
 
@@ -39,14 +40,14 @@ This work presents a unified trustworthiness evaluation with five contributions:
 \section{Related Work}\label{sec:related}
 %=============================================
 
-\textbf{Deep MRI reconstruction.}
+\paragraph{Deep MRI reconstruction.}
 Supervised methods fall into three families~\cite{safari2025}: end-to-end models such as U-Net~\cite{ronneberger2015} that map zero-filled inputs to targets but risk hallucinating structures~\cite{antun2020instabilities}; unrolled optimisation methods including VarNet~\cite{hammernik2018} and MoDL~\cite{aggarwal2019modl}; and DC-layer models~\cite{schlemper2018} that enforce fidelity to acquired k-space measurements. This work adopts a cascaded soft DC design.
 
-\textbf{Trustworthy AI in medical imaging.}
-Kaur et al.~\cite{kaur2022trustworthy} survey trustworthiness desiderata. The TGVN~\cite{atalik2026tgvn} introduces \emph{ambiguous-space consistency} to suppress hallucination via the forward operator's near-null singular vectors. MC Dropout~\cite{gal2016} approximates variational inference, deep ensembles~\cite{lakshminarayanan2017} capture uncertainty through prediction disagreement, and Kendall and Gal~\cite{kendall2017uncertainties} decompose aleatoric from epistemic components. Edupuganti et al.~\cite{edupuganti2021uncertainty} compare MC Dropout with heteroscedastic models for MRI, while Narnhofer et al.~\cite{narnhofer2022bayesian} apply Bayesian inference within variational networks. A direct calibration comparison of MC Dropout and deep ensembles for MRI reconstruction has not been reported.
+\paragraph{Trustworthy AI in medical imaging.}
+Kaur et al.~\cite{kaur2022trustworthy} survey trustworthiness desiderata. The TGVN~\cite{atalik2026tgvn} introduces ambiguous-space consistency to suppress hallucination via the forward operator's near-null singular vectors. MC Dropout~\cite{gal2016} approximates variational inference, deep ensembles~\cite{lakshminarayanan2017} capture uncertainty through prediction disagreement, and Kendall and Gal~\cite{kendall2017uncertainties} decompose aleatoric from epistemic components. Edupuganti et al.~\cite{edupuganti2021uncertainty} compare MC Dropout with heteroscedastic models for MRI, while Narnhofer et al.~\cite{narnhofer2022bayesian} apply Bayesian inference within variational networks. A direct calibration comparison of MC Dropout and deep ensembles for MRI reconstruction has not been reported.
 
-\textbf{Explainability and adversarial robustness.}
-Attribution methods---saliency~\cite{simonyan2014deep}, Grad-CAM~\cite{selvaraju2017}, integrated gradients~\cite{sundararajan2017}---are established for classification but under-explored for reconstruction, where no class label exists. Antun et al.~\cite{antun2020instabilities} show that small perturbations produce dramatic reconstruction failures, motivating adversarial evaluation with FGSM~\cite{goodfellow2015explaining} and PGD~\cite{madry2018towards}. This work extends this line by testing whether uncertainty can \emph{detect} such attacks.
+\paragraph{Explainability and adversarial robustness.}
+Attribution methods---saliency~\cite{simonyan2014deep}, Grad-CAM~\cite{selvaraju2017}, integrated gradients~\cite{sundararajan2017}---are established for classification but under-explored for reconstruction, where no class label exists. Antun et al.~\cite{antun2020instabilities} show that small perturbations produce dramatic reconstruction failures, motivating adversarial evaluation with FGSM~\cite{goodfellow2015explaining} and PGD~\cite{madry2018towards}. This work extends this line by testing whether uncertainty can detect such attacks.
 
 %=============================================
 \section{Methods}\label{sec:methods}
@@ -64,18 +65,18 @@ Let $\mathbf{x}\!\in\!\mathbb{R}^{H\times W}$ denote the fully-sampled cardiac M
 where $\lambda$ is a sigmoid-gated learnable scalar. Training minimises $\mathcal{L}=\alpha\,\mathcal{L}_{\text{SSIM}}+(1{-}\alpha)\,\mathcal{L}_{\ell_1}$ with $\alpha{=}0.51$.
 
 \subsection{Explainability, Uncertainty, and Robustness}
-\textbf{Explainability.} Three attribution methods are adapted to reconstruction: saliency maps ($|\nabla_{\mathbf{x}_0}\mathcal{L}|$), Grad-CAM~\cite{selvaraju2017} with the reconstruction loss replacing the class logit, and integrated gradients~\cite{sundararajan2017} from a zero baseline. Faithfulness is measured via Pearson correlation with the ground-truth error map.
+Three attribution methods are adapted to reconstruction: saliency maps ($|\nabla_{\mathbf{x}_0}\mathcal{L}|$), Grad-CAM~\cite{selvaraju2017} with the reconstruction loss replacing the class logit, and integrated gradients~\cite{sundararajan2017} from a zero baseline. Faithfulness is measured via Pearson correlation with the ground-truth error map (see Appendix, Fig.~\ref{fig:xai}).
 
-\textbf{Uncertainty.} MC Dropout ($T{=}30$ stochastic passes) following Gal and Ghahramani~\cite{gal2016} yields pixel-wise mean and standard deviation. A deep ensemble of $M{=}3$ independently initialised networks~\cite{lakshminarayanan2017} provides an alternative uncertainty estimate. Both are evaluated via Expected Calibration Error (ECE), Area Under the Sparsification Error curve (AUSE), and Pearson $r$ with absolute error.
+MC Dropout ($T{=}30$ stochastic passes) following Gal and Ghahramani~\cite{gal2016} yields pixel-wise mean and standard deviation. A deep ensemble of $M{=}3$ independently initialised networks~\cite{lakshminarayanan2017} provides an alternative uncertainty estimate. Both are evaluated via Expected Calibration Error (ECE), Area Under the Sparsification Error curve (AUSE), and Pearson $r$ with absolute error.
 
-\textbf{Robustness.} Perturbations include k-space Gaussian noise ($\sigma_n\!\in\![0.01,0.3]$), FGSM~\cite{goodfellow2015explaining} and PGD~\cite{madry2018towards} ($K{=}7$) at $\epsilon\!\in\!\{0.005,\ldots,0.1\}$, and cross-domain evaluation on CT images from MM-WHS~\cite{zhuang2019mmwhs}. A DC ablation (withholding k-space and mask at inference) isolates the DC layer's contribution.
+Perturbations include k-space Gaussian noise ($\sigma_n\!\in\![0.01,0.3]$), FGSM~\cite{goodfellow2015explaining} and PGD~\cite{madry2018towards} ($K{=}7$) at $\epsilon\!\in\!\{0.005,\ldots,0.1\}$, and cross-domain evaluation on CT images from MM-WHS~\cite{zhuang2019mmwhs}. A DC ablation (withholding k-space and mask at inference) isolates the DC layer's contribution.
 
 %=============================================
 \section{Experiments and Results}\label{sec:results}
 %=============================================
 
 \subsection{Setup}
-The MM-WHS cardiac dataset~\cite{zhuang2019mmwhs} provides $256{\times}256$ magnitude images with eight-class segmentation labels: 1\,738/254/236 MR and 3\,389/382/484 CT slices (train/val/test). K-space is simulated via 2-D FFT with retrospective random Cartesian undersampling retaining the central 8\,\% of lines. A ten-trial Bayesian search (Optuna) selected: learning rate $1.6{\times}10^{-3}$, batch size 16, 32 base features, dropout $p{=}0.11$, three DC cascades, $\alpha{=}0.51$, weight decay $3.4{\times}10^{-6}$. Training runs for 100 epochs with cosine annealing. The three ensemble members share the architecture but differ in weight initialisation and data-loader ordering.
+The MM-WHS cardiac dataset~\cite{zhuang2019mmwhs} provides $256{\times}256$ magnitude images with eight-class segmentation labels: 1\,738/254/236 MR and 3\,389/382/484 CT slices (train/val/test). Representative samples are shown in Appendix Fig.~\ref{fig:dataset}. K-space is simulated via 2-D FFT with retrospective random Cartesian undersampling retaining the central 8\,\% of lines. A ten-trial Bayesian search (Optuna) selected: learning rate $1.6{\times}10^{-3}$, batch size 16, 32 base features, dropout $p{=}0.11$, three DC cascades, $\alpha{=}0.51$, weight decay $3.4{\times}10^{-6}$. Training runs for 100 epochs with cosine annealing. The three ensemble members share the architecture but differ in weight initialisation and data-loader ordering.
 
 \subsection{Reconstruction Fidelity and Model Interpretability}
 
@@ -94,16 +95,16 @@ U-Net + DC (proposed) & \textbf{31.90} & \textbf{0.889} & \textbf{0.016} & \text
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:recon} shows a 2.9\,dB PSNR gain at $R{=}4{\times}$ and 1.6\,dB at $R{=}8{\times}$, with SSIM improving from 0.786 to 0.889. Removing DC at inference reduces PSNR from 31.9 to 23.8\,dB---an 8.1\,dB collapse---demonstrating that the cascaded DC layers contribute the majority of reconstruction quality by anchoring predictions to acquired k-space.
+Table~\ref{tab:recon} shows a 2.9\,dB PSNR gain at $R{=}4{\times}$ and 1.6\,dB at $R{=}8{\times}$, with SSIM improving from 0.786 to 0.889. Removing DC at inference reduces PSNR from 31.9 to 23.8\,dB---an 8.1\,dB collapse---demonstrating that the cascaded DC layers contribute the majority of reconstruction quality by anchoring predictions to acquired k-space. Fig.~\ref{fig:recon} confirms these gains visually: coherent aliasing artefacts in the zero-filled input are replaced by anatomically faithful reconstructions. Quality degrades gracefully with acceleration factor (Appendix, Fig.~\ref{fig:accel}).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig4_reconstruction_comparison.png}
-\caption{Reconstruction at $R{=}4{\times}$ and $R{=}8{\times}$. Top: ground truth, zero-filled input, and proposed output. Bottom: absolute error maps (brighter $=$ larger error). The method removes coherent aliasing while preserving papillary muscles and septal detail. Residual error concentrates at tissue boundaries due to Gibbs ringing from k-space truncation.}
+\caption{Reconstruction at $R{=}4{\times}$ and $R{=}8{\times}$. Top row: ground truth, zero-filled input, and proposed output at each acceleration. Bottom row: absolute error maps (brighter $=$ larger error). The method removes coherent aliasing while preserving papillary muscles and septal detail. Residual error concentrates at tissue boundaries due to Gibbs ringing from k-space truncation.}
 \label{fig:recon}
 \end{figure}
 
-Fig.~\ref{fig:recon} confirms these quantitative gains visually. To understand \emph{how} the network achieves this, gradient-based attributions are examined. Saliency maps concentrate on cardiac boundaries---the high-frequency structures most degraded by k-space truncation. Grad-CAM heatmaps across five U-Net stages reveal hierarchical attention: shallow encoder layers attend to local edges, while deeper decoder stages capture global anatomical context. All three attribution methods (saliency, Grad-CAM, integrated gradients) correlate positively with the ground-truth error map, confirming that learned attributions are \emph{faithful} to actual failure modes. This adaptation of classification-oriented attribution to a reconstruction task---using reconstruction loss as the gradient target instead of a class logit---validates that the network allocates representational capacity to clinically relevant structures.
+Gradient-based attributions reveal how the network achieves these gains. Saliency maps concentrate on cardiac boundaries---the high-frequency structures most degraded by k-space truncation. Grad-CAM heatmaps across five U-Net stages show hierarchical attention: shallow encoder layers attend to local edges, while deeper decoder stages capture global anatomical context (Appendix, Fig.~\ref{fig:xai}). All three attribution methods correlate positively with the ground-truth error map, confirming that learned attributions are faithful to actual failure modes. This adaptation of classification-oriented attribution to a reconstruction task---using reconstruction loss as the gradient target instead of a class logit---validates that the network allocates representational capacity to clinically relevant structures.
 
 \subsection{Uncertainty Quantification and Robustness}
 
@@ -120,16 +121,16 @@ Deep Ensemble ($M{=}3$) & \textbf{32.09} & \textbf{0.891} & \textbf{0.017} & 1.3
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:uq} compares the two uncertainty paradigms. The ensemble achieves lower ECE (0.017 vs.\ 0.026), consistent with the observation of Lakshminarayanan et al.~\cite{lakshminarayanan2017} that ensembles tend to be better calibrated than approximate Bayesian methods. MC Dropout, however, exhibits stronger monotonic correlation between predicted uncertainty and actual error ($r{=}0.59$ vs.\ $0.49$) and lower AUSE, making it more effective for pixel-level sparsification. The methods offer complementary strengths: ensembles for calibrated intervals, MC Dropout for ordinal error ranking.
+Table~\ref{tab:uq} compares the two uncertainty paradigms. The ensemble achieves lower ECE (0.017 vs.\ 0.026), consistent with the observation of Lakshminarayanan et al.~\cite{lakshminarayanan2017} that ensembles tend to be better calibrated than approximate Bayesian methods. MC Dropout, however, exhibits stronger monotonic correlation between predicted uncertainty and actual error ($r{=}0.59$ vs.\ $0.49$) and lower AUSE, making it more effective for pixel-level sparsification. The methods offer complementary strengths: ensembles for calibrated intervals, MC Dropout for ordinal error ranking. Additional MC Dropout visualisations are provided in Appendix Fig.~\ref{fig:mcdropout}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig13_ensemble_vs_mcdropout.png}
-\caption{Comparative uncertainty analysis. \textbf{Top/middle rows}: MC Dropout and ensemble reconstructions with predicted uncertainty (\texttt{magma}) and absolute error. Both concentrate uncertainty at tissue boundaries; the ensemble yields more localised estimates. \textbf{Bottom left}: sparsification---removing uncertain pixels reduces residual MSE near the oracle rate, outperforming random removal. \textbf{Bottom right}: uncertainty-vs-error scatter (MC Dropout $r{=}0.59$, Ensemble $r{=}0.49$).}
+\caption{Comparative uncertainty analysis. Top and middle rows: MC Dropout and ensemble reconstructions with predicted uncertainty (magma colourmap) and absolute error. Both concentrate uncertainty at tissue boundaries; the ensemble yields more localised estimates. Bottom left: sparsification analysis---removing uncertain pixels reduces residual MSE near the oracle rate, outperforming random removal. Bottom right: uncertainty-vs-error scatter (MC Dropout $r{=}0.59$, Ensemble $r{=}0.49$).}
 \label{fig:uncertainty}
 \end{figure}
 
-Fig.~\ref{fig:uncertainty} visualises these differences. The sparsification plot (bottom-left) is the most clinically relevant result: removing pixels by uncertainty ranking reduces residual MSE nearly as fast as the oracle ordering, meaning a clinician could identify unreliable regions from the uncertainty map alone.
+Fig.~\ref{fig:uncertainty} visualises these differences. The sparsification plot is the most clinically relevant result: removing pixels by uncertainty ranking reduces residual MSE nearly as fast as the oracle ordering, meaning a clinician could identify unreliable regions from the uncertainty map alone.
 
 \begin{table}[t]
 \caption{Robustness evaluation. PSNR (dB) under FGSM/PGD adversarial attacks and cross-domain shift. Uncertainty rises monotonically with attack strength and increases 77\% on out-of-distribution CT data.}\label{tab:robust}
@@ -148,7 +149,7 @@ Uncertainty & .005 & .006 & .007 & .009 & .004 & \textbf{.007} \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:robust} shows that PGD degrades PSNR more severely than FGSM at every budget, as expected from an iterative attack. The DC layer limits damage by enforcing fidelity to the \emph{original} acquired k-space, which remains unaffected by image-domain perturbations---a physics-grounded defence paralleling the TGVN's separation of trusted and untrusted information~\cite{atalik2026tgvn}. Uncertainty rises monotonically with attack strength, serving as a detection signal. The MR-trained model applied to CT data yields 0.9\,dB lower PSNR but 77\% higher uncertainty, appropriately signalling reduced confidence on out-of-distribution inputs.
+Table~\ref{tab:robust} shows that PGD degrades PSNR more severely than FGSM at every budget, as expected from an iterative attack (see also Appendix Fig.~\ref{fig:adversarial}). The DC layer limits damage by enforcing fidelity to the original acquired k-space, which remains unaffected by image-domain perturbations---a physics-grounded defence paralleling the TGVN's separation of trusted and untrusted information~\cite{atalik2026tgvn}. Uncertainty rises monotonically with attack strength, serving as a detection signal. The MR-trained model applied to CT data yields 0.9\,dB lower PSNR but 77\% higher uncertainty, appropriately signalling reduced confidence on out-of-distribution inputs (Appendix, Fig.~\ref{fig:crossdomain}).
 
 \subsection{Downstream Clinical Validation}
 
@@ -166,19 +167,83 @@ Zero-filled & .538 & .332 & .262 & .231 & .216 \\
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:dice} evaluates clinical utility. At moderate acceleration ($R{=}2{-}4{\times}$), reconstruction preserves 92--99\% of ground-truth Dice (0.617--0.668 vs.\ 0.672), whereas zero-filling retains only 49--80\%. Even at $R{=}8{\times}$, the proposed Dice (0.477) more than doubles the zero-filled baseline (0.231). The spatial correlation between reconstruction uncertainty and segmentation error ($r{=}0.19$ for MC Dropout) indicates that high-uncertainty regions coincide with areas where segmentation is likely to fail, enabling uncertainty-guided quality gating: slices exceeding an uncertainty threshold can be flagged for re-acquisition before entering the diagnostic pipeline.
+Table~\ref{tab:dice} evaluates clinical utility (see also Appendix Fig.~\ref{fig:segmentation}). At moderate acceleration ($R{=}2{-}4{\times}$), reconstruction preserves 92--99\% of ground-truth Dice (0.617--0.668 vs.\ 0.672), whereas zero-filling retains only 49--80\%. Even at $R{=}8{\times}$, the proposed Dice (0.477) more than doubles the zero-filled baseline (0.231). The spatial correlation between reconstruction uncertainty and segmentation error ($r{=}0.19$ for MC Dropout, Fig.~\ref{fig:segcorr}) indicates that high-uncertainty regions coincide with areas where segmentation is likely to fail, enabling uncertainty-guided quality gating: slices exceeding an uncertainty threshold can be flagged for re-acquisition before entering the diagnostic pipeline.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig15_uncertainty_seg_correlation.png}
+\caption{Spatial relationship between reconstruction uncertainty and segmentation failure. From left to right: ground truth, reconstruction, MC Dropout uncertainty map, binary segmentation error (where segmentation on reconstructed input disagrees with ground-truth labels), and an overlay showing that high-uncertainty regions (magma) spatially coincide with segmentation error boundaries (red contours). Pearson $r{=}0.19$ across the test set.}
+\label{fig:segcorr}
+\end{figure}
 
 %=============================================
 \section{Discussion}\label{sec:discussion}
 %=============================================
 
-\textbf{Complementary explainability and uncertainty.} All three attribution methods correlate positively with reconstruction error, confirming that the U-Net encodes clinically meaningful features. Saliency concentrates on cardiac boundaries while Grad-CAM reveals hierarchical reasoning from local edges to global anatomy. MC Dropout and ensembles offer complementary uncertainty: MC Dropout achieves stronger pixel-level correlation ($r{=}0.59$) and tighter sparsification for per-pixel masking, while ensembles yield lower ECE (0.017 vs.\ 0.026) for calibrated confidence intervals. A clinical deployment could combine ensemble disagreement for slice-level quality gating with MC Dropout for pixel-level uncertainty overlay.
+All three attribution methods correlate positively with reconstruction error, confirming that the U-Net encodes clinically meaningful features. Saliency concentrates on cardiac boundaries while Grad-CAM reveals hierarchical reasoning from local edges to global anatomy. MC Dropout and ensembles offer complementary uncertainty: MC Dropout achieves stronger pixel-level correlation ($r{=}0.59$) and tighter sparsification for per-pixel masking, while ensembles yield lower ECE (0.017 vs.\ 0.026) for calibrated confidence intervals. A clinical deployment could combine ensemble disagreement for slice-level quality gating with MC Dropout for pixel-level uncertainty overlay.
 
-\textbf{Physics-informed consistency as inherent defence.} The DC layer enforces fidelity to measured k-space regardless of network predictions, so image-domain adversarial perturbations cannot alter acquired measurements. Disabling DC collapses PSNR by 8.1\,dB---the single largest factor in reconstruction quality---paralleling the TGVN~\cite{atalik2026tgvn} principle of separating trusted from untrusted information.
+The DC layer enforces fidelity to measured k-space regardless of network predictions, so image-domain adversarial perturbations cannot alter acquired measurements. Disabling DC collapses PSNR by 8.1\,dB---the single largest factor in reconstruction quality---paralleling the TGVN~\cite{atalik2026tgvn} principle of separating trusted from untrusted information.
 
-\textbf{From pixel metrics to clinical trust.} The 77\% uncertainty increase on out-of-distribution CT data demonstrates practical OOD detection. Downstream segmentation evaluation moves beyond pixel metrics: Dice preservation at $R{=}2{-}4{\times}$ confirms artefacts do not catastrophically propagate, while the positive uncertainty--segmentation-failure correlation ($r{=}0.19$) suggests uncertainty maps can predict diagnostic degradation spatially.
+The 77\% uncertainty increase on out-of-distribution CT data demonstrates practical OOD detection. Downstream segmentation evaluation moves beyond pixel metrics: Dice preservation at $R{=}2{-}4{\times}$ confirms artefacts do not catastrophically propagate, while the positive uncertainty--segmentation-failure correlation ($r{=}0.19$) suggests uncertainty maps can predict diagnostic degradation spatially.
 
-\textbf{Limitations.} Simulated single-coil Cartesian undersampling does not capture multi-coil clinical complexity. The three-member ensemble is small; larger ensembles may improve calibration. The moderate uncertainty--segmentation correlation ($r{=}0.19$) leaves room for improvement via heteroscedastic loss~\cite{edupuganti2021uncertainty} or uncertainty-guided adaptive DC. Future work should extend to multi-coil data and prospectively undersampled acquisitions.
+Simulated single-coil Cartesian undersampling does not capture multi-coil clinical complexity. The three-member ensemble is small; larger ensembles may improve calibration. The moderate uncertainty--segmentation correlation ($r{=}0.19$) leaves room for improvement via heteroscedastic loss~\cite{edupuganti2021uncertainty} or uncertainty-guided adaptive DC. Future work should extend to multi-coil data and prospectively undersampled acquisitions.
+
+%=============================================
+\paragraph{Data and code availability.} The source code and trained models are publicly available at \url{https://github.com/samuel-zhang01/IX-Medical-Imaging}.
+
+%=============================================
+\newpage
+\appendix
+\section{Supplementary Figures}\label{sec:appendix}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA1_dataset_overview.png}
+\caption{Representative slices from the MM-WHS cardiac MR dataset. Top row: magnitude images showing anatomical variation across subjects. Bottom row: corresponding eight-class segmentation labels used for downstream evaluation.}
+\label{fig:dataset}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA2_quality_vs_acceleration.png}
+\caption{Reconstruction quality as a function of acceleration factor. Left: PSNR (dB) with error bars. Right: SSIM. The proposed method maintains a consistent advantage over zero-filling across all acceleration factors, with the gap widening at higher undersampling rates.}
+\label{fig:accel}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figA3_explainability_analysis.png}
+\caption{Explainability analysis at $R{=}4{\times}$. Row~1: zero-filled input, reconstruction, absolute error, and two saliency variants (loss-based and output-based). Row~2: Grad-CAM heatmaps across five U-Net stages, showing hierarchical progression from local edge detection in shallow encoder layers to global anatomical context in deeper decoder stages. Row~3: integrated-gradient attribution, overlay, and a faithfulness bar chart reporting Pearson correlation between each attribution method and the ground-truth error map. The adaptation of these classification-oriented methods to reconstruction loss is a methodological contribution.}
+\label{fig:xai}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA4_adversarial_robustness.png}
+\caption{Adversarial robustness analysis. (a)~PSNR degradation under FGSM and PGD attacks with increasing perturbation budget $\epsilon$. PGD is consistently more damaging as an iterative attack. (b)~Corresponding SSIM degradation. (c)~Mean MC Dropout uncertainty rises monotonically with $\epsilon$, confirming that uncertainty serves as a reliable adversarial detection signal without requiring ground-truth access.}
+\label{fig:adversarial}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figA5_mc_dropout_detail.png}
+\caption{Detailed MC Dropout uncertainty analysis ($T{=}30$ forward passes). Ground truth, mean reconstruction, pixel-wise uncertainty map, and absolute error are shown alongside a scatter plot of uncertainty versus error and the sparsification curve. The close agreement between uncertainty-guided and oracle pixel removal orderings confirms that predicted uncertainty is a reliable proxy for actual reconstruction error.}
+\label{fig:mcdropout}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/figA6_cross_domain.png}
+\caption{Cross-domain robustness evaluation. Box plots comparing the MR-trained model evaluated on in-distribution MR data versus out-of-distribution CT data from MM-WHS. Reconstruction quality decreases modestly (0.9\,dB PSNR, 0.05 SSIM), but predicted uncertainty increases by 77\%, demonstrating that the model appropriately signals reduced confidence on unseen imaging modalities.}
+\label{fig:crossdomain}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/figA7_downstream_segmentation.png}
+\caption{Downstream cardiac segmentation performance as a function of acceleration factor. The proposed reconstruction preserves segmentation Dice scores substantially better than zero-filling, particularly at moderate to high acceleration ($R{=}4{-}8{\times}$), confirming that reconstruction quality translates directly to diagnostic task utility.}
+\label{fig:segmentation}
+\end{figure}
 
 %=============================================
 \vspace{-2mm}

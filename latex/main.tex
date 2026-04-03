@@ -202,60 +202,6 @@ Simulated single-coil Cartesian undersampling does not capture multi-coil clinic
 \paragraph{Data and code availability.} The source code and trained models are publicly available at \url{https://github.com/samuel-zhang01/IX-Medical-Imaging}.
 
 %=============================================
-\newpage
-\appendix
-\section{Supplementary Figures}\label{sec:appendix}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/figA1_dataset_overview.png}
-\caption{Representative slices from the MM-WHS cardiac MR dataset. Top row: magnitude images showing anatomical variation across subjects. Bottom row: corresponding eight-class segmentation labels used for downstream evaluation.}
-\label{fig:dataset}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/figA2_quality_vs_acceleration.png}
-\caption{Reconstruction quality as a function of acceleration factor. Left: PSNR (dB) with error bars. Right: SSIM. The proposed method maintains a consistent advantage over zero-filling across all acceleration factors, with the gap widening at higher undersampling rates.}
-\label{fig:accel}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/figA3_explainability_analysis.png}
-\caption{Explainability analysis at $R{=}4{\times}$. Row~1: zero-filled input, reconstruction, absolute error, and two saliency variants (loss-based and output-based). Row~2: Grad-CAM heatmaps across five U-Net stages, showing hierarchical progression from local edge detection in shallow encoder layers to global anatomical context in deeper decoder stages. Row~3: integrated-gradient attribution, overlay, and a faithfulness bar chart reporting Pearson correlation between each attribution method and the ground-truth error map. The adaptation of these classification-oriented methods to reconstruction loss is a methodological contribution.}
-\label{fig:xai}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/figA4_adversarial_robustness.png}
-\caption{Adversarial robustness analysis. (a)~PSNR degradation under FGSM and PGD attacks with increasing perturbation budget $\epsilon$. PGD is consistently more damaging as an iterative attack. (b)~Corresponding SSIM degradation. (c)~Mean MC Dropout uncertainty rises monotonically with $\epsilon$, confirming that uncertainty serves as a reliable adversarial detection signal without requiring ground-truth access.}
-\label{fig:adversarial}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/figA5_mc_dropout_detail.png}
-\caption{Detailed MC Dropout uncertainty analysis ($T{=}30$ forward passes). Ground truth, mean reconstruction, pixel-wise uncertainty map, and absolute error are shown alongside a scatter plot of uncertainty versus error and the sparsification curve. The close agreement between uncertainty-guided and oracle pixel removal orderings confirms that predicted uncertainty is a reliable proxy for actual reconstruction error.}
-\label{fig:mcdropout}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/figA6_cross_domain.png}
-\caption{Cross-domain robustness evaluation. Box plots comparing the MR-trained model evaluated on in-distribution MR data versus out-of-distribution CT data from MM-WHS. Reconstruction quality decreases modestly (0.9\,dB PSNR, 0.05 SSIM), but predicted uncertainty increases by 77\%, demonstrating that the model appropriately signals reduced confidence on unseen imaging modalities.}
-\label{fig:crossdomain}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.85\textwidth]{figures/figA7_downstream_segmentation.png}
-\caption{Downstream cardiac segmentation performance as a function of acceleration factor. The proposed reconstruction preserves segmentation Dice scores substantially better than zero-filling, particularly at moderate to high acceleration ($R{=}4{-}8{\times}$), confirming that reconstruction quality translates directly to diagnostic task utility.}
-\label{fig:segmentation}
-\end{figure}
-
-%=============================================
 \vspace{-2mm}
 \begin{thebibliography}{21}
 \footnotesize
@@ -281,6 +227,62 @@ Simulated single-coil Cartesian undersampling does not capture multi-coil clinic
 \bibitem{kendall2017uncertainties} Kendall, A., Gal, Y.: What uncertainties do we need in Bayesian deep learning for computer vision? In: NeurIPS, pp.~5580--5590 (2017)
 \bibitem{edupuganti2021uncertainty} Edupuganti, V.G., et al.: Uncertainty quantification in deep MRI reconstruction. \textit{IEEE TMI} \textbf{40}(1), 239--250 (2021)
 \bibitem{narnhofer2022bayesian} Narnhofer, D., et al.: Bayesian uncertainty estimation of learned variational MRI reconstruction. \textit{IEEE TMI} \textbf{41}(2), 279--291 (2022)
+
+\end{thebibliography}
+
+%=============================================
+\newpage
+\appendix
+\section{Supplementary Figures}\label{sec:appendix}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA1_dataset_overview.png}
+\caption{MM-WHS cardiac MR dataset samples. The top row shows five representative axial magnitude slices illustrating the anatomical variation across subjects (ventricular size, myocardial thickness, surrounding tissue). The bottom row displays the corresponding eight-class segmentation masks where each colour represents a cardiac structure (left/right ventricle, left/right atrium, myocardium, ascending aorta, and pulmonary artery). These labels are used in Section~4.4 to evaluate downstream segmentation on reconstructed images.}
+\label{fig:dataset}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA2_quality_vs_acceleration.png}
+\caption{Reconstruction quality across acceleration factors $R{=}2$ to $R{=}10$. Left panel: PSNR (dB) with standard-deviation error bars across the 236-slice test set. Right panel: SSIM. The proposed U-Net+DC method (green) maintains a consistent advantage over zero-filling (blue dashed) at all acceleration factors. The gap widens at higher undersampling rates: at $R{=}2$, the gain is 4.6\,dB; at $R{=}10$, it is 1.3\,dB. This graceful degradation confirms that the learned DC layers provide diminishing but persistent benefit as the inverse problem becomes more ill-posed.}
+\label{fig:accel}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figA3_explainability_analysis.png}
+\caption{Explainability analysis for a representative $R{=}4{\times}$ test slice. Row~1 (left to right): zero-filled input, reconstruction, absolute error map, saliency computed from reconstruction loss, and saliency from output magnitude. The scatter inset reports Pearson $r{=}0.33$ between loss-based saliency and error. Row~2: Grad-CAM activation heatmaps at five U-Net stages (Encoder L1, Encoder L2, Bottleneck, Decoder L2, Decoder L1). Shallow layers highlight local edges and tissue boundaries; deeper layers attend to global cardiac anatomy. Row~3: integrated-gradient attribution map, overlay with ground truth, error overlay, and a bar chart comparing faithfulness (Pearson $r$ with error) across all methods. Saliency achieves $r{=}0.33$, Grad-CAM $r{=}0.08$--$0.35$ depending on layer, and integrated gradients $r{=}0.32$.}
+\label{fig:xai}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/figA4_adversarial_robustness.png}
+\caption{Adversarial robustness under FGSM and PGD-7 attacks at six perturbation budgets $\epsilon\in\{0, 0.005, 0.01, 0.02, 0.05, 0.1\}$. (a)~PSNR degrades from 31.5\,dB (clean) to 21.4\,dB (FGSM, $\epsilon{=}0.1$) and 18.7\,dB (PGD, $\epsilon{=}0.1$). PGD causes more damage at every budget because its iterative optimisation finds stronger adversarial directions. (b)~SSIM follows the same trend, dropping from 0.88 to 0.39 (FGSM) and 0.31 (PGD). (c)~Mean MC Dropout uncertainty rises monotonically from 0.005 to 0.008 with increasing $\epsilon$, demonstrating that elevated uncertainty can serve as an attack-detection signal without requiring ground-truth access.}
+\label{fig:adversarial}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figA5_mc_dropout_detail.png}
+\caption{MC Dropout uncertainty detail ($T{=}30$ stochastic forward passes) for a representative test slice. From left to right: ground truth, mean reconstruction across the 30 passes, pixel-wise standard deviation (uncertainty map, magma colourmap), and absolute reconstruction error (hot colourmap). The uncertainty map spatially tracks the error map, with highest values at tissue boundaries where undersampling artefacts are most severe. The scatter plot (lower left) shows the pixel-wise relationship between uncertainty and error. The sparsification curve (lower right) compares uncertainty-guided pixel removal against oracle removal (by true error): the close agreement between the two curves confirms that predicted uncertainty is an effective proxy for actual error.}
+\label{fig:mcdropout}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/figA6_cross_domain.png}
+\caption{Cross-domain evaluation: MR-trained model tested on out-of-distribution CT cardiac images from MM-WHS. Box plots compare per-slice distributions for in-domain MR (blue) and OOD CT (red). Left: PSNR drops modestly from 31.3\,dB (MR) to 30.4\,dB (CT), a 0.9\,dB decrease. Centre: SSIM decreases from 0.88 to 0.83. Right: mean predicted uncertainty increases from 0.004 to 0.007, a 77\% rise. This asymmetric response (small quality drop, large uncertainty increase) is desirable: the model degrades gracefully while clearly signalling reduced confidence, enabling clinical workflows to flag OOD inputs for manual review.}
+\label{fig:crossdomain}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/figA7_downstream_segmentation.png}
+\caption{Downstream cardiac segmentation Dice scores as a function of acceleration factor ($R{=}2$ to $R{=}10$). A pre-trained segmentation network is applied to ground-truth images, proposed reconstructions, and zero-filled inputs. At $R{=}4{\times}$, the proposed reconstruction preserves 92\% of the ground-truth Dice (0.617 vs.\ 0.672), while zero-filling retains only 49\% (0.332). The advantage persists at all acceleration rates; at $R{=}8{\times}$, the proposed Dice (0.477) more than doubles zero-filling (0.231). This confirms that reduced reconstruction artefacts translate directly into improved diagnostic performance on the downstream clinical task.}
+\label{fig:segmentation}
+\end{figure}
 
 \end{thebibliography}
 

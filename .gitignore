@@ -14,3 +14,11 @@ texput.log
 # Python
 __pycache__/
 *.pyc
+
+# IDE and tool configuration
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+data/

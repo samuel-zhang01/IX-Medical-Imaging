@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive experiment runner for Trustworthy AI in MRI Reconstruction.
+Experiment runner for Trustworthy AI in MRI Reconstruction.
 Runs all experiments end-to-end and saves results + figures.
 
 Experiments:
@@ -211,7 +211,7 @@ def experiment_2_ensemble():
     print('='*70)
     config = get_best_config()
     for i in range(3):
-        print(f'\n--- Ensemble member {i+1}/3 ---')
+        print(f'\nEnsemble member {i+1}/3')
         torch.manual_seed(42 + i * 1000)
         np.random.seed(42 + i * 1000)
         train_model_full(config, acceleration=4, max_epochs=40, tag=f'ensemble_{i}')
@@ -305,7 +305,7 @@ def experiment_4_trustworthy():
         if i >= 30: break
         test_samples.append(batch)
 
-    # --- 4a: Perturbation Study ---
+    # 4a: Perturbation Study
     print('\n[4a] K-Space Perturbation Study...')
     noise_levels = [0.0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3]
     perturb_results = {nl: {'psnrs': [], 'ssims': [], 'uncs': []} for nl in noise_levels}
@@ -386,7 +386,7 @@ def experiment_4_trustworthy():
     plt.close()
     print('  Saved: fig8_perturbation_study.pdf')
 
-    # --- 4b: Adversarial Attacks ---
+    # 4b: Adversarial Attacks
     print('\n[4b] Adversarial Attack Study...')
     epsilons = [0.0, 0.005, 0.01, 0.02, 0.05, 0.1]
     adv_results = {eps: {'fgsm_psnrs': [], 'pgd_psnrs': [], 'fgsm_ssims': [],
@@ -492,7 +492,7 @@ def experiment_4_trustworthy():
     plt.close()
     print('  Saved: fig9_adversarial_robustness.pdf')
 
-    # --- 4c: Cross-Domain ---
+    # 4c: Cross-Domain
     print('\n[4c] Cross-Domain Evaluation (MR→CT)...')
     _, _, ct_loader = get_dataloaders(DATA_ROOT, 'ct', acceleration=4, batch_size=1, num_workers=2)
     _, _, mr_loader = get_dataloaders(DATA_ROOT, 'mr', acceleration=4, batch_size=1, num_workers=2)
@@ -694,7 +694,7 @@ def experiment_6_visual_figures():
     for _ in range(8):
         b4 = next(iter4); b8 = next(iter8)
 
-    # --- Fig 4: Reconstruction comparison ---
+    # Fig 4: Reconstruction comparison
     model_R4.eval(); model_R8.eval()
     with torch.no_grad():
         pred4 = model_R4(b4['undersampled'].to(DEVICE), b4['kspace'].to(DEVICE), b4['mask'].to(DEVICE))
@@ -733,7 +733,7 @@ def experiment_6_visual_figures():
     plt.close()
     print('  Saved: fig4_reconstruction_comparison.pdf')
 
-    # --- Fig 1: Dataset overview ---
+    # Fig 1: Dataset overview
     mr_files = sorted(os.listdir(os.path.join(DATA_ROOT, 'mr_256/train/npz')))[:5]
     samples = [np.load(os.path.join(DATA_ROOT, 'mr_256/train/npz', f)) for f in mr_files]
 
@@ -751,7 +751,7 @@ def experiment_6_visual_figures():
     plt.close()
     print('  Saved: fig1_dataset_overview.pdf')
 
-    # --- Fig 2: K-space undersampling ---
+    # Fig 2: K-space undersampling
     sample_img = samples[2]['image'].astype(np.float32)
     sample_img = (sample_img - sample_img.min()) / (sample_img.max() - sample_img.min() + 1e-8)
     kspace = image_to_kspace(sample_img)
@@ -777,7 +777,7 @@ def experiment_6_visual_figures():
     plt.close()
     print('  Saved: fig2_kspace_undersampling.pdf')
 
-    # --- Training curves ---
+    # Training curves
     fig, axes = plt.subplots(1, 3, figsize=(14, 4))
     for R, color, label in [(4, '#2196F3', 'R=4x'), (8, '#F44336', 'R=8x')]:
         hp = os.path.join(CKPT_DIR, f'final_R{R}', f'history_R{R}.json')
@@ -800,7 +800,7 @@ def experiment_6_visual_figures():
     plt.close()
     print('  Saved: fig3_training_curves.pdf')
 
-    # --- MC Dropout uncertainty visualization ---
+    # MC Dropout uncertainty visualization
     model_R4.train()  # Enable dropout
     mc_preds = []
     with torch.no_grad():

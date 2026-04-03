@@ -248,7 +248,7 @@ def train_ensemble(data_root, save_dir, config, acceleration=4,
     print(f"{'='*60}\n")
 
     for i in range(num_models):
-        print(f"\n--- Ensemble member {i+1}/{num_models} ---")
+        print(f"\nEnsemble member {i+1}/{num_models}")
         # Different random seed for each model
         torch.manual_seed(42 + i * 1000)
         np.random.seed(42 + i * 1000)

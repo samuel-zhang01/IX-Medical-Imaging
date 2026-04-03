@@ -144,7 +144,7 @@ if __name__ == '__main__':
 
     # Train 3-member ensemble
     for i in range(3):
-        print(f'\n--- Ensemble member {i+1}/3 ---')
+        print(f'\nEnsemble member {i+1}/3')
         torch.manual_seed(42 + i * 1000)
         np.random.seed(42 + i * 1000)
         train_model(BEST_CONFIG, 4, max_epochs=80, tag=f'ensemble_{i}')

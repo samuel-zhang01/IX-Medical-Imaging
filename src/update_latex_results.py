@@ -90,19 +90,19 @@ def main():
 
     # Also print summary
     if 'test_results' in results:
-        print('\n--- Test Results Summary ---')
+        print('\nTest Results Summary')
         for R, data in sorted(results['test_results'].items(), key=lambda x: int(x[0])):
             print(f"  R={R}x: PSNR={data['psnr']:.2f}±{data['psnr_std']:.2f}, "
                   f"SSIM={data['ssim']:.4f}±{data['ssim_std']:.4f}")
 
     if 'cross_domain_results' in results:
         cd = results['cross_domain_results']
-        print(f"\n--- Cross-Domain ---")
+        print(f"\nCross-Domain")
         print(f"  MR: PSNR={cd['mr_psnr']:.2f}, Unc={cd['mr_unc']:.6f}")
         print(f"  CT: PSNR={cd['ct_psnr']:.2f}, Unc={cd['ct_unc']:.6f}")
 
     if 'dice_results' in results:
-        print(f"\n--- Downstream Segmentation ---")
+        print(f"\nDownstream Segmentation")
         for R, data in sorted(results['dice_results'].items(), key=lambda x: int(x[0])):
             print(f"  R={R}x: GT={data['gt_dice']:.4f}, Recon={data['recon_dice']:.4f}, ZF={data['zf_dice']:.4f}")
 

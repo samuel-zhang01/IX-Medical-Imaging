@@ -3,7 +3,7 @@ U-Net model with MC Dropout for MRI reconstruction with uncertainty quantificati
 Includes data consistency layer for physics-informed reconstruction.
 
 Architecture Rationale
-----------------------
+
 I chose a U-Net backbone because it remains the de-facto standard for dense
 prediction tasks in medical imaging (Ronneberger et al., 2015).  The
 encoder-decoder structure with skip connections is well suited to MRI
@@ -41,7 +41,7 @@ Key design decisions:
     (Schlemper et al., 2018).
 
 Uncertainty Quantification
---------------------------
+
 I implement two complementary approaches:
   1. MC Dropout (Gal & Ghahramani, 2016): by keeping dropout enabled at test
      time and running T stochastic forward passes, we approximate Bayesian

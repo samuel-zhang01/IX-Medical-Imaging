@@ -3,7 +3,7 @@ Data loading and k-space simulation for MRI reconstruction.
 Handles MM-WHS cardiac dataset with simulated single-coil k-space undersampling.
 
 K-Space Simulation Pipeline
-----------------------------
+
 Since the MM-WHS dataset provides magnitude images (not raw k-space), I
 simulate the MRI acquisition process.  The pipeline is:
     1. Start with a fully-sampled magnitude image (ground truth)
@@ -20,7 +20,7 @@ However, it lets us use any segmented cardiac dataset (like MM-WHS) without
 needing access to the scanner.
 
 Why Cartesian Undersampling?
------------------------------
+
 I chose 1D Cartesian (column-wise) undersampling because:
   - It is the most common acquisition scheme in clinical MRI, making our
     results directly relevant to practice

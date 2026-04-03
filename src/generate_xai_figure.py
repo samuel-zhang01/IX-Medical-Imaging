@@ -68,7 +68,7 @@ def load_model_and_sample(device):
     return model, sample, config
 
 
-# --------------- XAI Methods ---------------
+# XAI Methods
 
 def compute_saliency_loss(model, sample, device):
     """Saliency map: gradient of reconstruction loss w.r.t. input."""
@@ -171,7 +171,7 @@ def compute_integrated_gradients(model, sample, device, n_steps=50):
     return ig
 
 
-# --------------- Figure Generation ---------------
+# Figure Generation
 
 def generate_figure(model, sample, device):
     """Generate the full XAI explainability figure."""
@@ -215,7 +215,7 @@ def generate_figure(model, sample, device):
     saliency_output_smooth = gaussian_filter(saliency_output, sigma=2)
     ig_smooth = gaussian_filter(ig_map, sigma=2)
 
-    # --------------- Correlations between XAI methods and error ---------------
+    # Correlations between XAI methods and error
     error_flat = error_map.flatten()
     methods = {
         'Saliency\n(loss)': saliency_loss_smooth.flatten(),
@@ -230,7 +230,7 @@ def generate_figure(model, sample, device):
         r, _ = pearsonr(vals, error_flat)
         correlations[name] = r
 
-    # --------------- Build Figure ---------------
+    # Build Figure
     print("Building figure...")
     plt.rcParams.update({
         'font.family': 'serif',
@@ -245,7 +245,7 @@ def generate_figure(model, sample, device):
     fig.suptitle('Figure 6: XAI Explainability Analysis for MRI Reconstruction',
                  fontsize=13, fontweight='bold', y=0.98)
 
-    # ---------- Row 1: Input, Reconstruction, Error, Saliency (loss), Saliency (output) ----------
+    # Row 1: Input, Reconstruction, Error, Saliency (loss), Saliency (output)
     row1_data = [
         (input_img, 'Input (Zero-filled)', 'gray', None),
         (recon_img, 'Reconstruction', 'gray', None),
@@ -263,7 +263,7 @@ def generate_figure(model, sample, device):
             cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
             cb.ax.tick_params(labelsize=7)
 
-    # ---------- Row 2: Grad-CAM at 5 layers ----------
+    # Row 2: Grad-CAM at 5 layers
     for j, (label, cam) in enumerate(gradcam_maps.items()):
         ax = axes[1, j]
         # Overlay Grad-CAM on the reconstruction
@@ -274,7 +274,7 @@ def generate_figure(model, sample, device):
         cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
         cb.ax.tick_params(labelsize=7)
 
-    # ---------- Row 3: IG, IG overlay, correlation bar chart (spans 3 cols) ----------
+    # Row 3: IG, IG overlay, correlation bar chart (spans 3 cols)
     # IG heatmap
     ax = axes[2, 0]
     vmax_ig = np.percentile(ig_smooth, 99)

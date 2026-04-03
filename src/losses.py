@@ -2,7 +2,7 @@
 Loss functions for MRI reconstruction.
 
 Loss Design Rationale
----------------------
+
 I use a combined L1 + SSIM loss, following Zhao et al. (2017) "Loss Functions
 for Image Restoration with Neural Networks" and the approach adopted in many
 MRI reconstruction papers (e.g., Zbontar et al. 2018, Souza et al. 2020).
